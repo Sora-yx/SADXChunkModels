@@ -7,6 +7,7 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 #include "..\CommonFunctions\CommonFunctions.h"
+#include "..\CommonFunctions\CommonSADXFunctions.h"
 #include "UsercallFunctionHandler.h"
 
 using std::unordered_map;
@@ -57,8 +58,7 @@ void DrawAmyModel(CharObj2* a2, int animNum, NJS_ACTION* action)
 	njPopMatrix(1);
 }
 
-FunctionPointer(void, sub_4187D0, (EntityData1* a1), 0x4187D0);
-FunctionPointer(void, sub_49F0B0, (EntityData1* a1, struct_a3* a2), 0x49F0B0);
+
 FunctionPointer(int, sub_42FB00, (), 0x42FB00);
 auto sub_486CD0 = GenerateUsercallCallWrapper<signed int (*)(CharObj2* a1, EntityData1* a2)>(rEAX, 0x486CD0, rECX, rESI);
 void __cdecl Amy_Display_r(ObjectMaster* obj)
@@ -213,7 +213,7 @@ LABEL_7:
 			}
 			if (*((_DWORD*)data1->field_3C + 16))
 			{
-				sub_4187D0(data1);
+				DrawEventAction(data1);
 			}
 			else if (Controllers[0].HeldButtons & Buttons_X && data1->Action == 53)
 			{
@@ -243,7 +243,7 @@ LABEL_7:
 	Direct3D_ResetZFunc();
 	if (IsGamePaused())
 	{
-		sub_49F0B0(data1, &data2->_struct_a3);
+		DrawCharacterShadow(data1, &data2->_struct_a3);
 	}
 }
 
@@ -372,13 +372,37 @@ void __cdecl Amy_AfterImage_Main_r(ObjectMaster* obj)
 	}
 }
 
+void CharSelectDrawAmy(NJS_ACTION* anim, float frame, QueuedModelFlagsB flg) {
+
+	if (*(int*)0x3B2A2FD == 3) {
+		njPushMatrix(nullptr);
+		SetupWorldMatrix();
+		Direct3D_SetChunkModelRenderState();
+		NJS_ACTION act2 = *anim;
+		act2.object = modelmap2[act2.object];
+		if (*(int*)0x3ABD9CC)
+		{
+			DrawQueueDepthBias = -5952.0;
+			njCnkAction_Queue(&act2, frame, QueuedModelFlagsB_EnableZWrite);
+			DrawQueueDepthBias = 0.0;
+		}
+		else
+		{
+			njCnkAction(&act2, frame);
+		}
+		Direct3D_UnsetChunkModelRenderState();
+		njPopMatrix(1);
+	}
+}
+
 extern "C"
 {
 	__declspec(dllexport) void Init(const char* path, const HelperFunctions& helperFunctions)
 	{
 		string mdlpath = string(path) + "\\models\\";
 		unordered_map<string, void*> labels;
-		if (!FindModels(mdlpath, labels)) return;
+		if (!FindModels(mdlpath, labels)) 
+			return;
 		const IniFile* mdlini = new IniFile(mdlpath + "models.ini");
 		const IniGroup* mdlgrp = mdlini->getGroup("");
 		for (auto i = mdlgrp->cbegin(); i != mdlgrp->cend(); ++i)
@@ -390,6 +414,8 @@ extern "C"
 				modelmap2[AMY_OBJECTS[i]] = modelmap[i];
 		WriteJump(Amy_Display, Amy_Display_r);
 		WriteJump((void*)0x486F60, Amy_AfterImage_Main_r);
+
+		WriteCall((void*)0x418214, CharSelectDrawAmy);
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

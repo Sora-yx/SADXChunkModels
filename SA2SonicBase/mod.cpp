@@ -7,6 +7,7 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 #include "..\CommonFunctions\CommonFunctions.h"
+#include "..\CommonFunctions\CommonSADXFunctions.h"
 
 using std::unordered_map;
 using std::vector;
@@ -238,8 +239,7 @@ int sub_446960(int result, int a2, __int16 a3)
 
 short savedyrot[8][256];
 uint8_t savedyrotindex[8] = {};
-FunctionPointer(void, sub_4187D0, (EntityData1* a1), 0x4187D0);
-FunctionPointer(void, sub_49F0B0, (EntityData1* a1, struct_a3* a2), 0x49F0B0);
+
 FunctionPointer(void, sub_791A80, (NJS_MATRIX_PTR a1), 0x791A80);
 void __cdecl Sonic_Display_r(ObjectMaster* obj)
 {
@@ -334,7 +334,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 			njPushMatrix(nullptr);
 			njMultiMatrix(nullptr, posmatrix);
 			if (*((_DWORD*)data1->field_3C + 16))
-				sub_4187D0(data1);
+				DrawEventAction(data1);
 			else
 			{
 				NJS_ACTION* action;
@@ -365,7 +365,7 @@ void __cdecl Sonic_Display_r(ObjectMaster* obj)
 		RestoreConstantAttr();
 		Direct3D_ResetZFunc();
 		if (IsGamePaused())
-			sub_49F0B0(data1, &data2->_struct_a3);
+			DrawCharacterShadow(data1, &data2->_struct_a3);
 	}
 }
 

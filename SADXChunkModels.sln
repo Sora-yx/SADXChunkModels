@@ -55,6 +55,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SADXAmy", "SADXAmy\SADXAmy.
 		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B} = {EC0293F5-4BCF-46B2-8133-18CAEA141C5B}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SADXKnuckles", "SADXKnuckles\SADXKnuckles.vcxproj", "{1A3EC02B-9424-486C-A847-51C598614470}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -121,6 +123,14 @@ Global
 		{6DA61BCB-46A7-4CBB-95E3-BB5721CF6DD3}.Release|x64.Build.0 = Release|x64
 		{6DA61BCB-46A7-4CBB-95E3-BB5721CF6DD3}.Release|x86.ActiveCfg = Release|Win32
 		{6DA61BCB-46A7-4CBB-95E3-BB5721CF6DD3}.Release|x86.Build.0 = Release|Win32
+		{1A3EC02B-9424-486C-A847-51C598614470}.Debug|x64.ActiveCfg = Debug|x64
+		{1A3EC02B-9424-486C-A847-51C598614470}.Debug|x64.Build.0 = Debug|x64
+		{1A3EC02B-9424-486C-A847-51C598614470}.Debug|x86.ActiveCfg = Debug|Win32
+		{1A3EC02B-9424-486C-A847-51C598614470}.Debug|x86.Build.0 = Debug|Win32
+		{1A3EC02B-9424-486C-A847-51C598614470}.Release|x64.ActiveCfg = Release|x64
+		{1A3EC02B-9424-486C-A847-51C598614470}.Release|x64.Build.0 = Release|x64
+		{1A3EC02B-9424-486C-A847-51C598614470}.Release|x86.ActiveCfg = Release|Win32
+		{1A3EC02B-9424-486C-A847-51C598614470}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

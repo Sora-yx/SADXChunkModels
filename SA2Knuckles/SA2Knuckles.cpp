@@ -7,6 +7,7 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 #include "..\CommonFunctions\CommonFunctions.h"
+#include "..\CommonFunctions\CommonSADXFunctions.h"
 
 using std::unordered_map;
 using std::vector;
@@ -101,8 +102,8 @@ struct __declspec(align(4)) charobj2_arraything
 
 short savedyrot[8][256];
 uint8_t savedyrotindex[8] = {};
-FunctionPointer(void, sub_4187D0, (EntityData1* a1), 0x4187D0);
-FunctionPointer(void, sub_49F0B0, (EntityData1* a1, struct_a3* a2), 0x49F0B0);
+
+
 void __cdecl Knuckles_Display_r(ObjectMaster* obj_1)
 {
 	EntityData1* data1; // esi
@@ -283,7 +284,7 @@ void __cdecl Knuckles_Display_r(ObjectMaster* obj_1)
 			}
 			if (*((_DWORD*)data1->field_3C + 16))
 			{
-				sub_4187D0(data1);
+				DrawEventAction(data1);
 			}
 			else if (data2->AnimationThing.State == 2)
 			{
@@ -300,7 +301,7 @@ void __cdecl Knuckles_Display_r(ObjectMaster* obj_1)
 		Direct3D_ResetZFunc();
 		if (IsGamePaused())
 		{
-			sub_49F0B0(data1, &data2->_struct_a3);
+			DrawCharacterShadow(data1, &data2->_struct_a3);
 		}
 	}
 }
