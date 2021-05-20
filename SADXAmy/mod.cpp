@@ -9,6 +9,7 @@
 #include "..\CommonFunctions\CommonFunctions.h"
 #include "..\CommonFunctions\CommonSADXFunctions.h"
 #include "UsercallFunctionHandler.h"
+#include "Trampoline.h"
 
 using std::unordered_map;
 using std::vector;
@@ -59,6 +60,207 @@ void DrawAmyModel(CharObj2* a2, int animNum, NJS_ACTION* action)
 }
 
 
+void __cdecl DrawEventActionPLRR(EntityData1* data1, int light)
+{
+	eventwk* v2; // ebp
+	EVENT_ACTION_LIST* v3; // edi
+	EVENT_ACTION_LIST* v4; // esi
+	NJS_TEXLIST* v5; // eax
+	char v6; // cl
+	QueuedModelFlagsB QueueModelFlag; // bl
+	NJS_MOTION* v8; // eax
+	obj* v9; // eax
+	_BOOL1 v10; // zf
+	int i; // edi
+	double v12; // st7
+	NJS_MOTION* v13; // edx
+	float v14; // ecx
+	int v15; // edx
+	double v16; // st7
+	double v17; // st7
+	int j; // eax
+	NJS_ACTION* v19; // [esp-4h] [ebp-44h]
+	int v20; // [esp+0h] [ebp-40h]
+	int v21; // [esp+0h] [ebp-40h]
+	float v22; // [esp+0h] [ebp-40h]
+	char v23; // [esp+1Bh] [ebp-25h]
+	float v24; // [esp+1Ch] [ebp-24h]
+	float v25; // [esp+1Ch] [ebp-24h]
+	float v26; // [esp+20h] [ebp-20h]
+	EVENT_ACTION_LIST* data; // [esp+24h] [ebp-1Ch]
+	NJS_ACTION_LINK* v28[2]; // [esp+28h] [ebp-18h] BYREF
+	NJS_MOTION* a3; // [esp+30h] [ebp-10h] BYREF
+	NJS_MOTION* v30; // [esp+34h] [ebp-Ch]
+	float a4; // [esp+38h] [ebp-8h]
+	float v32; // [esp+3Ch] [ebp-4h]
+
+	v2 = (eventwk*)data1->field_3C;
+	if (!MissedFrames)
+	{
+		if (v2)
+		{
+			v4 = v2->action.list;
+			v3 = v2->action.old;
+			data = v3;
+			if (v4)
+			{
+				v6 = v4->mode;
+				v26 = (float)v4->action.motion->nbFrame;
+				v24 = v2->action.timer;
+				v5 = v4->texlist;
+				int toto = ((unsigned __int8)v4->mode >> 4) & 0xD;
+				QueueModelFlag = (QueuedModelFlagsB)toto;
+				v23 = v4->mode;
+				if (v5)
+				{
+					njSetTexture(v5);
+					v6 = v23;
+				}
+				if (light >= 0 && (v6 & 0x20) == 0)
+				{
+					Direct3D_PerformLighting(light);
+					v6 = v23;
+				}
+				if (v3 && v4->linkframe)
+				{
+					v9 = (obj*)v4->action.object;
+					v28[1] = (NJS_ACTION_LINK*)&a3;
+					v30 = v4->action.motion;
+					v10 = (v3->mode & 1) == 0;
+					v28[0] = (NJS_ACTION_LINK*)v9;
+					v8 = v3->action.motion;
+					a3 = v8;
+					if (v10)
+					{
+						a4 = (float)(v8->nbFrame - 1);
+					}
+					else
+					{
+						a4 = 0.0;
+					}
+					v32 = 0.0;
+					i = 0;
+					while (data1 != EntityData1Ptrs[i])
+					{
+						if (++i >= 8)
+						{
+							goto OutOfRange;
+						}
+					}
+					v12 = floor(v24);
+					if ((double)(unsigned __int8)v4->linkframe <= v12 + v12)
+					{
+						v14 = v32;
+						v13 = v30;
+					}
+					else
+					{
+						v14 = a4;
+						v13 = a3;
+					}
+					EPJoinVertexes(i, v4->action.object, v13, v14);
+					v6 = v23;
+				OutOfRange:
+					v16 = v24 + 1.0;
+					v15 = (unsigned __int8)v4->linkframe + 1;
+					if ((v6 & 8) != 0)
+					{
+						*(float*)&v20 = v16 / (double)v15;
+						sub_4084D0((NJS_ACTION_LINK*)v28, v20, (unsigned __int8)QueueModelFlag);
+					}
+					else
+					{
+						*(float*)&v21 = v16 / (double)v15;
+						if ((v6 & 4) != 0)
+						{
+							sub_406EE0((NJS_ACTION_LINK*)v28, v21, (unsigned __int8)QueueModelFlag);
+						}
+						else
+						{
+							sub_4084B0((NJS_ACTION_LINK*)v28, v21, (unsigned __int8)QueueModelFlag);
+						}
+					}
+					v17 = (double)MissedFrames_B + v24;
+					v25 = v17;
+					if ((double)(unsigned __int8)v4->linkframe > floor(v17))
+					{
+						goto LABEL_46;
+					}
+					FreeMemory(data);
+					v2->action.old = 0;
+					goto LABEL_45;
+				}
+				j = 0;
+				while (data1 != EntityData1Ptrs[j])
+				{
+					if (++j >= 8)
+					{
+						goto OutOfRange_Again;
+					}
+				}
+				EPJoinVertexes(j, v4->action.object, v4->action.motion, v2->action.timer);
+				v6 = v23;
+			OutOfRange_Again:
+				v22 = v2->action.timer;
+				if ((v6 & 8) != 0)
+				{
+					njAction_Queue_407FC0(&v4->action, v22, QueueModelFlag);
+				}
+				else
+				{
+					v19 = &v4->action;
+					if ((v6 & 4) != 0)
+					{
+						njAction_Queue(v19, v22, QueueModelFlag);
+					}
+					else
+					{
+						NjAction_QueueLinkEx(v19, v22, QueueModelFlag);// Draw Character on CharselScreen
+					}
+				}
+				v25 = (double)MissedFrames_B * v4->speed + v24;
+				if ((v4->mode & 1) != 0)
+				{
+					if (v25 < (double)v26)
+					{
+					LABEL_46:
+						if (light >= 0 && (v23 & 0x20) == 0)
+						{
+							Direct3D_PerformLighting(0);
+						}
+						v2->action.timer = v25;
+						return;
+					}
+					if (!v4->next)
+					{
+						v25 = v25 - v26;
+						goto LABEL_46;
+					}
+				}
+				else if (v26 - 1.0 > v25)
+				{
+					goto LABEL_46;
+				}
+				v2->action.old = v4;
+				v2->action.list = v4->next;
+			LABEL_45:
+				v25 = 0.0;
+				goto LABEL_46;
+			}
+		}
+	}
+}
+
+Trampoline* DrawEventAction_t;
+void DrawEventAction_r(taskwk* twp, int ligPalNo) {
+	
+
+	FunctionPointer(void, original, (taskwk * twp, int ligPalNo), DrawEventAction_t->Target());
+	original(twp, ligPalNo);
+
+	twp = twp;
+}
+
 FunctionPointer(int, sub_42FB00, (), 0x42FB00);
 auto sub_486CD0 = GenerateUsercallCallWrapper<signed int (*)(CharObj2* a1, EntityData1* a2)>(rEAX, 0x486CD0, rECX, rESI);
 void __cdecl Amy_Display_r(ObjectMaster* obj)
@@ -85,7 +287,9 @@ void __cdecl Amy_Display_r(ObjectMaster* obj)
 	NJS_VECTOR a2; // [esp+20h] [ebp-18h]
 	NJS_VECTOR vs; // [esp+2Ch] [ebp-Ch]
 
+	task* tsk = (task*)obj;
 	data1 = obj->Data1;
+
 	data2 = ((EntityData2*)obj->Data2)->CharacterData;
 	currentplayer = data1->CharIndex;
 	Direct3D_SetZFunc(3u);
@@ -211,9 +415,13 @@ LABEL_7:
 			{
 				njRotateY(0, (unsigned __int16)(-32768 - v17));
 			}
-			if (*((_DWORD*)data1->field_3C + 16))
+			taskwk* twk = (taskwk*)data1;
+
+			//if (*((_DWORD*)data1->field_3C + 16))
+			if (twk->ewp->action.list)
 			{
 				DrawEventAction(data1);
+				//DrawEventActionPL(data1, dspl);
 			}
 			else if (Controllers[0].HeldButtons & Buttons_X && data1->Action == 53)
 			{
@@ -415,7 +623,8 @@ extern "C"
 		WriteJump(Amy_Display, Amy_Display_r);
 		WriteJump((void*)0x486F60, Amy_AfterImage_Main_r);
 
-		WriteCall((void*)0x418214, CharSelectDrawAmy);
+		//WriteCall((void*)0x418214, CharSelectDrawAmy);
+		//DrawEventAction_t = new Trampoline((int)DrawEventActionPL, (int)DrawEventActionPL + 0x7, DrawEventAction_r);
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

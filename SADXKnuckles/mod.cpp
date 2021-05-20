@@ -99,12 +99,12 @@ void __cdecl Knuckles_Display_r(ObjectMaster* obj)
 	NJS_VECTOR vs; // [esp+24h] [ebp-Ch] BYREF
 	motionwk2* field_24_dupea; // [esp+34h] [ebp+4h]
 	float frame; // [esp+34h] [ebp+4h]
-
-
 	data1_ptr = obj->Data1;
 	data2 = ((EntityData2*)obj->Data2)->CharacterData;
 	csts* v10 = (csts*)data2->array_1x132;
 	field_24_dupea = (motionwk2*)obj->Data2;
+	taskwk* mwk = (taskwk*)data1_ptr;
+
 	if (IsVisible(&data1_ptr->Position, 20.0))
 	{
 		Direct3D_SetZFunc(1u);
@@ -166,8 +166,6 @@ void __cdecl Knuckles_Display_r(ObjectMaster* obj)
 			a2.z = a2.z + data1_ptr->Position.z;
 			if (v5 || action == 20) //digging stuff
 			{
-		
-				taskwk* mwk = (taskwk*)data1_ptr;
 
 				a2.x = v10->normal2.x * mwk->value.f + a2.x;
 				a2.y = v10->normal2.y * mwk->value.f + a2.y;
@@ -205,7 +203,7 @@ void __cdecl Knuckles_Display_r(ObjectMaster* obj)
 					njRotateX(0, (unsigned __int16)v14);
 				}
 
-				
+
 				v15 = acos(v10->normal2.y) * 65536.0 * -0.1591549762031479;
 				if ((unsigned int)(unsigned __int64)v15)
 				{
@@ -241,9 +239,11 @@ void __cdecl Knuckles_Display_r(ObjectMaster* obj)
 					njScaleV(0, &a2);
 				}
 			}
+
 			if (*((_DWORD*)data1_ptr->field_3C + 16))
 			{
 				DrawEventAction(data1_ptr);
+				//DrawEventActionPL(data1_ptr, dspl);
 			}
 			else
 			{
@@ -252,8 +252,10 @@ void __cdecl Knuckles_Display_r(ObjectMaster* obj)
 					action = data2->AnimationThing.action;
 				else
 					action = data2->AnimationThing.AnimData[currentAnimation].Animation;
+				animation = currentAnimation;
 				DrawKnuxModel(data2, currentAnimation, action);
 				CallBackStuff(action, data2);
+
 
 				if (currentAnimation == 13
 					|| currentAnimation == 14 && (data1_ptr->Status & (Status_Unknown1 | Status_Ground)) != 0)
@@ -291,6 +293,7 @@ void __cdecl Knuckles_Display_r(ObjectMaster* obj)
 }
 
 
+
 extern "C"
 {
 	__declspec(dllexport) void Init(const char* path, const HelperFunctions& helperFunctions)
@@ -317,6 +320,8 @@ extern "C"
 			modelmap2[KNUCKLES_ACTIONS[62]->object] = modelmap[75];
 
 		WriteJump(Knuckles_Display, Knuckles_Display_r);
+
+		//WriteCall((void*)0x47255A, DrawEventActionPL);
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };
